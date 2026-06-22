@@ -1,0 +1,34 @@
+spring:
+  profiles:
+    active: gemini
+  application:
+    name: hr_assistant
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ragdb
+    username: postgres
+    password: postgres
+  ai:
+    vectorstore:
+      pgvector:
+        initialize-schema: true # cria a extens�o, a tabel e o indice no primeiro start
+        index-type: HNSW  # indice de busca aproximada de vizinhos
+        distance-type: COSINE_DISTANCE  # dist�ncia que casa com embeddings de sente�a
+        table-name: vector_store
+    chat:
+      memory:
+        redis:
+          host: localhost
+          port: 6379
+          time-to-live: PT30M  # a conversa expira ap�s 30 min de inatividade
+
+app:
+  rag:
+    top-k: 5  # quantos chunks o QuestionAnswerAdvisor recupera
+    similarity-threshold: 0.4  # piso de similaridade do retrieval
+  memory:
+    max-messages: 20 # tamanho da janela do MessageWindowChatMemory
+
+    # nivel DEBUG so para o advisor de observabilidade (PromptLoggingAdvisor)
+logging:
+  level:
+    br.com.devsuperior.hr_assistant.char.PromptLoggingAdvisor: DEBUG
